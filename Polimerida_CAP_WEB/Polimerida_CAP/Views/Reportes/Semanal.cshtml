@@ -1,0 +1,184 @@
+@model List<Polimerida_CAP.Models.ReporteSemanalViewModel>
+@{
+    ViewData["Title"] = "Reporte Semanal";
+    // Calcular fechas de la semana si hay datos
+    DateTime? startDate = null;
+    if (ViewBag.StartDate != null)
+    {
+        startDate = (DateTime)ViewBag.StartDate;
+    }
+    string DiaYFecha(int offset, string nombreDia)
+    {
+        if (startDate.HasValue)
+        {
+            var fecha = startDate.Value.AddDays(offset);
+            return $"{nombreDia}<br><span style='font-size:12px'>{fecha:dd-MMM-yyyy}</span>";
+        }
+        return nombreDia;
+    }
+}
+<div class="card mb-3">
+    <div class="card-header">Filtros</div>
+    <div class="card-body">
+        <form id="filtros-reporte" class="form-inline" method="post" asp-action="Semanal" asp-controller="Reportes">
+            <div class="form-group mr-2">
+                <label for="semana">Semana:</label>
+                <input type="number" id="semana" name="semana" class="form-control ml-2" min="1" max="53" required value="@ViewBag.Semana" />
+            </div>
+            <div class="form-group mr-2">
+                <label for="empleado">Empleado:</label>
+                <select id="empleado" name="empleado" class="form-control ml-2">
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Empleados)
+                    {
+                        <option value="@item.Value" selected="@(item.Selected ? "selected" : null)">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <label for="grupo">Grupo:</label>
+                <select id="grupo" name="grupo" class="form-control ml-2">
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Grupos)
+                    {
+                        <option value="@item.Value" selected="@(item.Selected ? "selected" : null)">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <label for="turno">Turno:</label>
+                <select id="turno" name="turno" class="form-control ml-2">
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Turnos)
+                    {
+                        <option value="@item.Value" selected="@(item.Selected ? "selected" : null)">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary ml-2">Buscar</button>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Información de asistencias</span>
+        <div>
+            <button class="btn btn-secondary btn-sm mr-2" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
+            <button type="button" class="btn btn-success btn-sm" id="btn-exportar-excel"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+        </div>
+    </div>
+    <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-bordered table-sm mb-0" id="tabla-reporte">
+            <thead class="thead-light">
+                <tr>
+                    <th>Empleado</th>
+                    <th>Nombre</th>
+                    <th>@Html.Raw(DiaYFecha(0, "Lunes"))</th>
+                    <th>@Html.Raw(DiaYFecha(1, "Martes"))</th>
+                    <th>@Html.Raw(DiaYFecha(2, "Miércoles"))</th>
+                    <th>@Html.Raw(DiaYFecha(3, "Jueves"))</th>
+                    <th>@Html.Raw(DiaYFecha(4, "Viernes"))</th>
+                    <th>@Html.Raw(DiaYFecha(5, "Sábado"))</th>
+                    <th>@Html.Raw(DiaYFecha(6, "Domingo"))</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    foreach (var row in Model)
+                    {
+                        <tr>
+                            <td>@row.IdEmpleado</td>
+                            <td>@row.NombreEmpleado</td>
+                            @foreach (var dia in new[]{row.Lunes, row.Martes, row.Miercoles, row.Jueves, row.Viernes, row.Sabado, row.Domingo})
+                            {
+                                string clase = !string.IsNullOrEmpty(dia.IncidenciaDia) ? "bg-primary text-white" :
+                                               dia.Estado == "Inasistencia" ? "bg-danger text-white" :
+                                               dia.Estado == "Retardo" ? "bg-warning" :
+                                               dia.Estado == "Omisión de registro" ? "bg-light text-dark" :
+                                               "";
+                                <td class="@clase">
+                                    @if (!string.IsNullOrEmpty(dia.IncidenciaDia))
+                                    {
+                                        <span class="badge badge-info" style="font-size:13px;">@dia.IncidenciaDia</span>
+                                    }
+                                    else if (dia.Estado == "Inasistencia")
+                                    {
+                                        <span>Inasistencia</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="font-size:13px;display:block;">@(string.IsNullOrEmpty(dia.Entrada) || dia.Entrada == "-" ? "sin registro" : dia.Entrada)</span>
+                                        <span style="font-size:13px;display:block;">@(string.IsNullOrEmpty(dia.Salida) || dia.Salida == "-" ? "sin registro" : dia.Salida)</span>
+                                        @if (dia.Estado == "Omisión de registro")
+                                        {
+                                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                                        }
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="9" class="text-center">Sin datos para mostrar</td></tr>
+                }
+            </tbody>
+        </table>
+        <div class="mt-3">
+            <span class="badge badge-danger">Inasistencia</span>
+            <span class="badge badge-warning">Retardo</span>
+            <span class="badge badge-primary">Incidencia</span>
+            <span class="ml-2"><i class="fas fa-exclamation-triangle text-warning"></i> Omisión de registro</span>
+        </div>
+    </div>
+</div>
+<form id="form-exportar-excel" method="post" asp-action="ExportarExcel" asp-controller="Reportes" style="display:none">
+    <input type="hidden" name="jsonData" id="jsonData" />
+</form>
+<script>
+    document.getElementById('btn-exportar-excel').addEventListener('click', function () {
+        // Tomar los datos del modelo actual de la tabla
+        var rows = Array.from(document.querySelectorAll('#tabla-reporte tbody tr'));
+        var data = rows.map(function(row) {
+            var cells = row.querySelectorAll('td');
+            if (cells.length < 9) return null;
+            return {
+                Empleado: cells[0].innerText.trim(),
+                Nombre: cells[1].innerText.trim(),
+                Lunes: cells[2].innerText.trim(),
+                Martes: cells[3].innerText.trim(),
+                Miercoles: cells[4].innerText.trim(),
+                Jueves: cells[5].innerText.trim(),
+                Viernes: cells[6].innerText.trim(),
+                Sabado: cells[7].innerText.trim(),
+                Domingo: cells[8].innerText.trim()
+            };
+        }).filter(x => x !== null);
+        document.getElementById('jsonData').value = JSON.stringify(data);
+        document.getElementById('form-exportar-excel').submit();
+    });
+</script>
+<style>
+    #tabla-reporte th, #tabla-reporte td {
+        min-width: 120px;
+        max-width: 180px;
+        white-space: normal;
+        word-break: break-word;
+        text-align: center;
+        vertical-align: middle;
+    }
+    #tabla-reporte th span {
+        display: block;
+        text-align: center;
+        font-weight: normal;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+    #tabla-reporte th:first-child, #tabla-reporte td:first-child {
+        min-width: 60px;
+        max-width: 80px;
+    }
+    #tabla-reporte th:nth-child(2), #tabla-reporte td:nth-child(2) {
+        min-width: 100px;
+        max-width: 120px;
+    }
+</style> 

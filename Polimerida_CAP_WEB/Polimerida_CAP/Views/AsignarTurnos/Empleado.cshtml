@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Asignar Turno a un Empleado";
+    var empleados = ViewBag.Empleados as List<Polimerida_CAP.Services.Data.Empleado>;
+    var turnos = ViewBag.Turnos as List<Polimerida_CAP.Services.Data.Turno>;
+}
+<div class="content-header"><div class="container-fluid"></div></div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header"><h3 class="card-title">Asignar Turno a un Empleado</h3></div>
+                    <div class="card-body">
+                        @if (TempData["Mensaje"] != null)
+                        {
+                            <div class="alert alert-primary">@TempData["Mensaje"]</div>
+                        }
+                        <form asp-action="Empleado" method="post">
+                            <div class="form-group">
+                                <label for="buscarEmpleado">Buscar empleado</label>
+                                <input type="text" id="buscarEmpleado" class="form-control" placeholder="Buscar por nombre..." onkeyup="filtrarEmpleados()" />
+                            </div>
+                            <div class="form-group">
+                                <label for="empleadoId">Empleado</label>
+                                <select class="form-control" id="empleadoId" name="empleadoId" required onchange="mostrarInfoEmpleado()">
+                                    <option value="">-- Seleccione un empleado --</option>
+                                    @foreach (var emp in empleados)
+                                    {
+                                        var selected = (Context.Request.Query["empleadoId"] == emp.Idempleado.ToString()) ? "selected" : "";
+                                        @:<option value="@emp.Idempleado" @selected>@emp.Primernombre @emp.Apellidopaterno @emp.Apellidomaterno</option>
+                                    }
+                                </select>
+                            </div>
+                            <div id="info-actual" class="mb-3" style="display:@((ViewBag.TurnoActual != null || ViewBag.SubgrupoActual != null) ? "block" : "none");">
+                                <div><strong>Subgrupo actual:</strong> <span id="subgrupoActual">@ViewBag.SubgrupoActual</span></div>
+                                <div><strong>Turno actual:</strong> <span id="turnoActual">@ViewBag.TurnoActual</span></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="turnoId">Turno</label>
+                                <select class="form-control" id="turnoId" name="turnoId" required>
+                                    <option value="">-- Seleccione un turno --</option>
+                                    @foreach (var t in turnos)
+                                    {
+                                        <option value="@t.Idturno">@t.Nombre (@t.Horaentrada:hh\:mm - @t.Horasalida:hh\:mm)</option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Asignar Turno</button>
+                            <a asp-action="Index" class="btn btn-secondary ml-2">Cancelar</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+<script>
+function filtrarEmpleados() {
+    var input = document.getElementById('buscarEmpleado');
+    var filtro = input.value.toLowerCase();
+    var select = document.getElementById('empleadoId');
+    for (var i = 0; i < select.options.length; i++) {
+        var txt = select.options[i].text.toLowerCase();
+        select.options[i].style.display = txt.includes(filtro) ? '' : 'none';
+    }
+}
+
+function mostrarInfoEmpleado() {
+    var empleadoId = document.getElementById('empleadoId').value;
+    if (!empleadoId) {
+        document.getElementById('info-actual').style.display = 'none';
+        document.getElementById('subgrupoActual').textContent = '';
+        document.getElementById('turnoActual').textContent = '';
+        return;
+    }
+    // Redirigir para recargar la vista con el empleado seleccionado y mostrar info actual
+    var url = new URL(window.location.href);
+    url.searchParams.set('empleadoId', empleadoId);
+    window.location.href = url.toString();
+}
+</script>
+} 

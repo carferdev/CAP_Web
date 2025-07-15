@@ -1,0 +1,195 @@
+@model IEnumerable<Polimerida_CAP.Models.IncidenciaViewModel>
+@{
+    ViewData["Title"] = "Catálogo de Incidencias";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Listado de Incidencias</h3>
+                <div class="card-tools">
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Agregar Nueva Incidencia
+                    </a>
+                </div>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Codigo</td>
+                                <td>@item.Descripcion</td>
+                                <td>@item.RegStatus</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.IdIncidencia" class="btn btn-primary btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="@item.IdIncidencia" data-nombre="@item.Descripcion" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* Modal de baja de incidencia *@
+<div class="modal fade" id="bajaModal" tabindex="-1" role="dialog" aria-labelledby="bajaModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content text-center p-4">
+      <form id="bajaForm" method="post">
+        @Html.AntiForgeryToken()
+        <div class="mt-4 mb-2">
+          <span style="font-size: 60px; color: #ffb300;">
+            <i class="fas fa-exclamation-circle"></i>
+          </span>
+        </div>
+        <h3 class="font-weight-bold mb-3">Baja de incidencia</h3>
+        <div class="mb-4" style="font-size: 1.1rem;">
+          <input type="hidden" id="bajaIncidenciaId" name="IdIncidencia" />
+          <div class="form-group">
+            <label for="fechaBaja">Fecha de baja <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="fechaBaja" name="FechaBaja" required />
+            <span class="text-danger" id="fechaBajaError" style="display:none;">La fecha de baja es obligatoria.</span>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+          <button type="button" class="btn btn-primary btn-lg mr-2" id="bajaAceptarBtn">Aceptar</button>
+          <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content text-center p-4">
+            <form id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mt-4 mb-2">
+                    <span style="font-size: 60px; color: #ffb300;">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </span>
+                </div>
+                <h3 class="font-weight-bold mb-3">¿Está seguro?</h3>
+                <div class="mb-4" style="font-size: 1.1rem;">
+                    ¿Desea eliminar el registro "<strong id="itemNombre"></strong>"?
+                </div>
+                <div class="d-flex justify-content-center mb-3">
+                    <button type="submit" class="btn btn-danger btn-lg mr-2">Sí, eliminar</button>
+                    <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-primary mt-3">
+        @TempData["Mensaje"]
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            // Función para obtener la fecha actual en formato YYYY-MM-DD
+            function getCurrentDate() {
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = String(today.getMonth() + 1).padStart(2, '0');
+                var day = String(today.getDate()).padStart(2, '0');
+                return year + '-' + month + '-' + day;
+            }
+
+            // Variables para almacenar datos de la incidencia
+            var incidenciaCodigo = '';
+            var incidenciaDescripcion = '';
+
+            // Abrir modal de baja
+            $('.baja-btn').on('click', function(){
+                var id = $(this).data('id');
+                var codigo = $(this).data('codigo');
+                var descripcion = $(this).data('descripcion');
+                
+                // Guardar datos para usar en el modal de confirmación
+                incidenciaCodigo = codigo;
+                incidenciaDescripcion = descripcion;
+                
+                $('#bajaIncidenciaId').val(id);
+                $('#fechaBaja').val(getCurrentDate()); // Establecer fecha actual por defecto
+                $('#fechaBajaError').hide();
+                $('#bajaModal').modal('show');
+            });
+
+            // Al hacer clic en aceptar en el modal de baja
+            $('#bajaAceptarBtn').on('click', function(){
+                var fecha = $('#fechaBaja').val();
+                if(!fecha){
+                    $('#fechaBajaError').show();
+                    return;
+                }
+                $('#fechaBajaError').hide();
+                $('#bajaModal').modal('hide');
+                
+                // Pasar datos al modal de confirmación
+                $('#incidenciaCodigo').text(incidenciaCodigo);
+                $('#incidenciaDescripcion').text(incidenciaDescripcion);
+                
+                // Guardar datos en el form de confirmación
+                $('#deleteForm').append('<input type="hidden" name="FechaBaja" value="'+fecha+'" />');
+                $('#deleteForm').append('<input type="hidden" name="RegStatus" value="B" />'); // Siempre cambiar a inactivo
+                $('#deleteForm').attr('action','@Url.Action("Delete","Incidencias")/'+$('#bajaIncidenciaId').val());
+                $('#deleteModal').modal('show');
+            });
+
+            // Limpiar campos ocultos al cerrar el modal de confirmación
+            $('#deleteModal').on('hidden.bs.modal', function(){
+                $('#deleteForm input[name="FechaBaja"]').remove();
+                $('#deleteForm input[name="RegStatus"]').remove();
+            });
+        });
+    </script>
+    <script>
+    $(function(){
+      // Mostrar modal y rellenar datos al hacer clic en eliminar
+      $(document).on('click', '.delete-btn', function () {
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+        $('#deleteModal #itemNombre').text(nombre);
+        $('#deleteForm').attr('action', '/Incidencias/Delete/' + id);
+        $('#deleteModal').modal('show');
+      });
+      // Forzar cierre de modal y restaurar vista
+      $(document).on('click', '[data-dismiss="modal"]', function () {
+        var $modal = $(this).closest('.modal');
+        $modal.modal('hide');
+        setTimeout(function() {
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open');
+        }, 300);
+      });
+    });
+    </script>
+} 

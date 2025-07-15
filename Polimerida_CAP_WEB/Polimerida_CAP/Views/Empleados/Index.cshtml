@@ -1,0 +1,209 @@
+@model IEnumerable<Polimerida_CAP.Models.EmpleadoViewModel>
+@{
+    ViewData["Title"] = "Catálogo de Empleados";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+<div class="content-header"><div class="container-fluid"></div></div>
+<section class="content"><div class="container-fluid"><div class="card"><div class="card-header"><h3 class="card-title">Listado de Empleados</h3><div class="card-tools"><a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Nuevo Empleado</a></div></div><div class="card-body">
+<div class="d-flex align-items-center mb-2">
+    <span class="switch-label" id="switchLabel">Activos</span>
+    <label class="toggle-switch">
+        <input type="checkbox" id="switchInactivos">
+        <span class="toggle-slider"></span>
+    </label>
+    <span class="switch-label ml-2">Inactivos</span>
+</div>
+@{
+    var mostrarFechaBaja = Model.Any(e => e.RegStatus != "A");
+}
+<div id="tablaEmpleadosContainerWrapper">
+    <div style="max-height: 400px; overflow-y: auto;">
+        <div id="tablaEmpleadosContainer">
+            <table id="tablaEmpleados" class="table table-bordered table-striped table-smaller-font">
+            <thead><tr>
+                <th>@Html.DisplayNameFor(m=>m.First().DepartamentoNombre)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().Credencial)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().PrimerNombre)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().ApellidoPaterno)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().ApellidoMaterno)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().PuestoNombre)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().Sexo)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().RegStatus)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().DispositivoNombre)</th>
+                <th>@Html.DisplayNameFor(m=>m.First().TurnoNombre)</th>
+                @if (mostrarFechaBaja) { <th>Fecha de Baja</th> }
+                <th>Acciones</th>
+            </tr></thead>
+            <tbody>
+            @foreach(var e in Model){
+            <tr>
+                <td>@e.DepartamentoNombre</td>
+                <td>@e.Credencial</td>
+                <td>@e.PrimerNombre</td>
+                <td>@e.ApellidoPaterno</td>
+                <td>@e.ApellidoMaterno</td>
+                <td>@e.PuestoNombre</td>
+                <td>@(e.Sexo == "male" ? "Masculino" : "Femenino")</td>
+                <td>@e.RegStatus</td>
+                <td>@e.DispositivoNombre</td>
+                <td>@e.TurnoNombre</td>
+                @if (mostrarFechaBaja) { <td>@(e.RegStatus != "A" ? e.FechaBaja?.ToString("yyyy-MM-dd") : "")</td> }
+                <td>
+                    <a asp-action="Edit" asp-route-id="@e.IdEmpleado" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                    <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="@e.IdEmpleado" data-nombre="@e.PrimerNombre @e.ApellidoPaterno" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            }
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></div></div></section>
+
+<!-- Modal de confirmación de eliminación (movido fuera de la sección y divs) -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content text-center p-4">
+            <form id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mt-4 mb-2">
+                    <span style="font-size: 60px; color: #ffb300;">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </span>
+                </div>
+                <h3 class="font-weight-bold mb-3">¿Está seguro?</h3>
+                <div class="mb-4" style="font-size: 1.1rem;">
+                    ¿Desea eliminar al empleado "<strong id="empNombre"></strong>"?
+                    <div class="form-group mt-3">
+                        <label for="fechaBaja">Fecha de baja <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="fechaBaja" name="FechaBaja" required />
+                        <span class="text-danger" id="fechaBajaError" style="display:none;">La fecha de baja es obligatoria.</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center mb-3">
+                    <button type="submit" class="btn btn-danger btn-lg mr-2">Sí, eliminar</button>
+                    <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="/lib/datatables/css/dataTables.bootstrap4.min.css" />
+    <script src="/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/lib/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+    $(function(){
+      function initDataTable() {
+        $('#tablaEmpleados').DataTable({
+          responsive:true,
+          lengthChange:false,
+          autoWidth:false,
+          language: { url: "/lang/es-ES.json" },
+          dom: '<"top"f>rt<"bottom"ip><"clear">'
+        });
+      }
+      initDataTable();
+
+      // Función para obtener la fecha actual en formato YYYY-MM-DD
+      function getCurrentDate() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = String(today.getMonth() + 1).padStart(2, '0');
+        var day = String(today.getDate()).padStart(2, '0');
+        return year + '-' + month + '-' + day;
+      }
+
+      // Abrir modal de baja
+      $('#tablaEmpleados').on('click', '.delete-btn', function(){
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+        $('#empNombre').text(nombre);
+        $('#fechaBaja').val(getCurrentDate());
+        $('#fechaBajaError').hide();
+        var baseUrl = '@Url.Action("Delete", "Empleados")';
+        $('#deleteForm').attr('action', baseUrl + '/' + id);
+        $('#deleteModal').modal('show'); // <-- Esta línea es clave
+      });
+
+      // Validar fecha antes de enviar
+      $('#deleteForm').on('submit', function(e){
+        var fecha = $('#fechaBaja').val();
+        if(!fecha){
+          $('#fechaBajaError').show();
+          e.preventDefault();
+          return false;
+        }
+        $('#fechaBajaError').hide();
+        return true;
+      });
+
+      $('#switchInactivos').on('change', function(){
+        var mostrarInactivos = $(this).is(':checked');
+        $.get('@Url.Action("EmpleadosTabla", "Empleados")', { mostrarInactivos: mostrarInactivos }, function(data){
+          $('#tablaEmpleadosContainer').html(data);
+          initDataTable();
+        });
+      });
+
+      // Forzar cierre de modal por si Bootstrap falla
+      $(document).on('click', '[data-dismiss="modal"]', function () {
+        $(this).closest('.modal').modal('hide');
+      });
+    });
+    </script>
+} 
+<style>
+.table-smaller-font {
+    font-size: 0.92rem;
+}
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+  vertical-align: middle;
+}
+.toggle-switch input { display: none; }
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #2196F3;
+  transition: .4s;
+  border-radius: 50%;
+}
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #90caf9;
+}
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+  background-color: #1976d2;
+}
+.switch-label {
+  margin: 0 10px 0 0;
+  font-weight: 500;
+  font-size: 1rem;
+}
+</style> 

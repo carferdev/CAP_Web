@@ -1,0 +1,21 @@
+@model Polimerida_CAP.Models.UsuarioViewModel
+@{
+    ViewData["Title"] = "Eliminar Usuario";
+}
+<h2>Eliminar Usuario</h2>
+<h4>¿Estás seguro que deseas eliminar este usuario?</h4>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.Idusuario</dd>
+        <dt class="col-sm-2">Usuario</dt>
+        <dd class="col-sm-10">@Model.Usuario</dd>
+        <dt class="col-sm-2">Estado</dt>
+        <dd class="col-sm-10">@Model.RegStatus</dd>
+    </dl>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Idusuario" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div> 

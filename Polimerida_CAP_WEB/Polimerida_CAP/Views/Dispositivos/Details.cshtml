@@ -1,0 +1,6 @@
+@model Polimerida_CAP.Models.DispositivoViewModel
+@{
+    ViewData["Title"]="Detalles del Dispositivo";
+}
+<div class="content-header"><div class="container-fluid"></div></div>
+<section class="content"><div class="container-fluid"><div class="card"><div class="card-header"><h3 class="card-title">Detalles</h3></div><div class="card-body"><dl class="row"><dt class="col-sm-3">@Html.DisplayNameFor(m=>m.Descripcion)</dt><dd class="col-sm-9">@Model.Descripcion</dd><dt class="col-sm-3">@Html.DisplayNameFor(m=>m.Clase)</dt><dd class="col-sm-9">@Model.Clase</dd><dt class="col-sm-3">@Html.DisplayNameFor(m=>m.Division)</dt><dd class="col-sm-9">@Model.Division</dd><dt class="col-sm-3">@Html.DisplayNameFor(m=>m.Tipo)</dt><dd class="col-sm-9">@Model.Tipo</dd><dt class="col-sm-3">@Html.DisplayNameFor(m=>m.Ip)</dt><dd class="col-sm-9">@Model.Ip</dd></dl></div><div class="card-footer"><a asp-action="Edit" asp-route-id="@Model.IdDispositivo" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a><a asp-action="Index" class="btn btn-secondary">Volver</a></div></div></div></section> 

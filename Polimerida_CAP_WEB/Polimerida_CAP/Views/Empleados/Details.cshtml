@@ -1,0 +1,11 @@
+<div class="form-group">
+    <label>Foto</label><br />
+    @if (Model.UrlFoto != null)
+    {
+        <img src="@Model.UrlFoto" alt="Foto empleado" style="max-width:200px;max-height:200px;" />
+    }
+    else
+    {
+        <span class="text-muted">Sin foto</span>
+    }
+</div> 

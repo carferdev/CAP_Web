@@ -1,0 +1,98 @@
+﻿@model Polimerida_CAP.Models.TurnosViewModel
+
+@{
+    ViewData["Title"] = "Agregar Nuevo Turno";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        @* <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewData["Title"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Panel">Inicio</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Catálogo de Turnos</a></li>
+                    <li class="breadcrumb-item active">Agregar</li>
+                </ol>
+            </div>
+        </div> *@
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form asp-action="Create" method="post">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Datos del Nuevo Turno</h3>
+                        </div>
+                        <div class="card-body">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <input type="hidden" asp-for="RegStatus" />
+
+                            <div class="form-group">
+                                <label asp-for="Nombre"></label>
+                                <input asp-for="Nombre" class="form-control" placeholder="Ej: Matutino, Vespertino, Nocturno">
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="HoraEntrada"></label>
+                                        <input asp-for="HoraEntrada" class="form-control" type="time">
+                                        <span asp-validation-for="HoraEntrada" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="HoraSalida"></label>
+                                        <input asp-for="HoraSalida" class="form-control" type="time">
+                                        <span asp-validation-for="HoraSalida" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Entradacomida"></label>
+                                        <input asp-for="Entradacomida" class="form-control" type="time">
+                                        <span asp-validation-for="Entradacomida" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Salidacomida"></label>
+                                        <input asp-for="Salidacomida" class="form-control" type="time">
+                                        <span asp-validation-for="Salidacomida" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @{
+        // Esta línea es crucial para que la validación del lado del cliente funcione.
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

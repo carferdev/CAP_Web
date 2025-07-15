@@ -1,0 +1,52 @@
+@model Polimerida_CAP.Models.IncidenciaEmpleadoViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Incidencia de Empleado";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Eliminar Incidencia de Empleado</h3>
+                    <div class="card-tools">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h4><i class="icon fas fa-exclamation-triangle"></i> ¡Advertencia!</h4>
+                        ¿Está seguro que desea eliminar esta incidencia del empleado?
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Empleado:</dt>
+                        <dd class="col-sm-9">@Model.NombreEmpleado</dd>
+
+                        <dt class="col-sm-3">Incidencia:</dt>
+                        <dd class="col-sm-9">@Model.DescripcionIncidencia</dd>
+
+                        <dt class="col-sm-3">Fecha de Inicio:</dt>
+                        <dd class="col-sm-9">@Model.FechaInicio.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-3">Fecha de Fin:</dt>
+                        <dd class="col-sm-9">@Model.FechaFin.ToString("dd/MM/yyyy")</dd>
+                    </dl>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="IdIncidenciaEmpleado" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,56 @@
+@model List<Polimerida_CAP.Services.Data.Subgrupo>
+@{
+    ViewData["Title"] = "Asignar Turnos";
+    var turnos = (List<Polimerida_CAP.Services.Data.Turno>)ViewBag.Turnos;
+    var grupos = (List<Polimerida_CAP.Services.Data.Grupo>)ViewBag.Grupos;
+    int? grupoSel = ViewBag.GrupoSeleccionado as int?;
+}
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-primary">@TempData["Mensaje"]</div>
+}
+<form method="get" class="form-inline mb-3">
+    <label for="grupo">Grupo:</label>
+    <select name="grupo" id="grupo" class="form-control mx-2">
+        <option value="">Todos</option>
+        @foreach (var g in grupos)
+        {
+            <option value="@g.Idgrupo" selected="@(grupoSel == g.Idgrupo ? "selected" : null)">@g.Descripcion</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+<form method="post" asp-action="Guardar">
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Subgrupo</th>
+                <th>Turno actual</th>
+                <th>Nuevo turno</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@Model[i].Descripcion</td>
+                    <td>@(turnos.FirstOrDefault(t => t.Idturno == Model[i].Idturno) != null ?
+    $"{turnos.FirstOrDefault(t => t.Idturno == Model[i].Idturno).Nombre} (" +
+    $"{turnos.FirstOrDefault(t => t.Idturno == Model[i].Idturno).Horaentrada:HH:mm} - {turnos.FirstOrDefault(t => t.Idturno == Model[i].Idturno).Horasalida:HH:mm})"
+    : "")
+</td>
+                    <td>
+                        <input type="hidden" name="subgrupoIds" value="@Model[i].Idsubgrupo" />
+                        <select name="turnoIds" class="form-control">
+                            @foreach (var t in turnos)
+                            {
+                                <option value="@t.Idturno" selected="@(t.Idturno == Model[i].Idturno ? "selected" : null)">@t.Nombre (@t.Horaentrada.ToString("HH:mm") - @t.Horasalida.ToString("HH:mm"))</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Guardar cambios</button>
+</form> 

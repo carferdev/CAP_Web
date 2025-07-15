@@ -1,0 +1,6 @@
+@model Polimerida_CAP.Models.PuestoViewModel
+@{
+    ViewData["Title"]="Eliminar Puesto";
+}
+<div class="content-header"><div class="container-fluid"></div></div>
+<section class="content"><div class="container-fluid"><div class="row"><div class="col-md-6 offset-md-3"><div class="card card-danger"><div class="card-header"><h3 class="card-title">Confirmar eliminación</h3></div><div class="card-body"><p>¿Está seguro de eliminar el puesto <strong>@Model.Descripcion</strong>?</p></div><div class="card-footer"><form asp-action="Delete" asp-route-id="@Model.IdPuesto" method="post">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger">Eliminar</button><a asp-action="Index" class="btn btn-secondary">Cancelar</a></form></div></div></div></div></div></section> 

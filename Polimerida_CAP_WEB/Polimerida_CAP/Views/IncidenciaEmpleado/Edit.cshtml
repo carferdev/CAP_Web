@@ -1,0 +1,107 @@
+@model Polimerida_CAP.Models.IncidenciaEmpleadoViewModel
+
+@{
+    ViewData["Title"] = "Editar Incidencia de Empleado";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Editar Incidencia de Empleado</h3>
+                    <div class="card-tools">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="IdIncidenciaEmpleado" />
+                        <input type="hidden" asp-for="RegStatus" />
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="IdEmpleado" class="control-label"></label>
+                                    <select asp-for="IdEmpleado" class="form-control" required>
+                                        <option value="">-- Seleccionar Empleado --</option>
+                                        @foreach (var empleado in Model.Empleados)
+                                        {
+                                            var nombreCompleto = $"{empleado.PrimerNombre} {empleado.ApellidoPaterno} {empleado.ApellidoMaterno}";
+                                            var isSelected = empleado.IdEmpleado == Model.IdEmpleado ? "selected" : "";
+                                            <option value="@empleado.IdEmpleado" selected="@isSelected">@nombreCompleto</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="IdEmpleado" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="IdIncidencia" class="control-label"></label>
+                                    <select asp-for="IdIncidencia" class="form-control" required>
+                                        <option value="">-- Seleccionar Incidencia --</option>
+                                        @foreach (var incidencia in Model.Incidencias)
+                                        {
+                                            var descripcionCompleta = $"{incidencia.Codigo} - {incidencia.Descripcion}";
+                                            var isSelected = incidencia.IdIncidencia == Model.IdIncidencia ? "selected" : "";
+                                            <option value="@incidencia.IdIncidencia" selected="@isSelected">@descripcionCompleta</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="IdIncidencia" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="FechaInicio" class="control-label"></label>
+                                    <input asp-for="FechaInicio" class="form-control" type="date" required />
+                                    <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="FechaFin" class="control-label"></label>
+                                    <input asp-for="FechaFin" class="form-control" type="date" required />
+                                    <span asp-validation-for="FechaFin" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Validación para asegurar que la fecha fin no sea menor que la fecha inicio
+            $('#FechaFin').change(function() {
+                var fechaInicio = new Date($('#FechaInicio').val());
+                var fechaFin = new Date($(this).val());
+                
+                if (fechaFin < fechaInicio) {
+                    alert('La fecha de fin no puede ser menor que la fecha de inicio.');
+                    $(this).val('');
+                }
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,5 @@
+@model Polimerida_CAP.Models.SubgrupoViewModel
+@{
+    ViewData["Title"]="Detalles del Subgrupo";
+}
+<section class="content"><div class="container-fluid"><div class="card"><div class="card-header"><h3 class="card-title">Detalles</h3></div><div class="card-body"><dl class="row"><dt class="col-sm-3">@Html.DisplayNameFor(m=>m.Nombre)</dt><dd class="col-sm-9">@Model.Nombre</dd><dt class="col-sm-3">@Html.DisplayNameFor(m=>m.Descripcion)</dt><dd class="col-sm-9">@Model.Descripcion</dd></dl></div><div class="card-footer"><a asp-action="Edit" asp-route-id="@Model.IdSubgrupo" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a><a asp-action="Index" class="btn btn-secondary">Volver</a></div></div></div></section> 

@@ -1,0 +1,183 @@
+@model Polimerida_CAP.Models.AsignarTurnoMultipleViewModel
+@{
+    ViewData["Title"] = "Asignar Turnos a Varios Empleados";
+    var grupos = ViewBag.Grupos as List<Polimerida_CAP.Services.Data.Grupo>;
+    int? grupoSeleccionado = ViewBag.GrupoSeleccionado as int?;
+}
+<div class="content-header"><div class="container-fluid"></div></div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header"><h3 class="card-title">Asignar Turnos a Varios Empleados</h3></div>
+                    <div class="card-body">
+                        @if (TempData["Mensaje"] != null)
+                        {
+                            <div class="alert alert-primary">@TempData["Mensaje"]</div>
+                        }
+                        <form asp-action="EmpleadoMultiple" method="get" class="mb-3">
+                            <div class="form-group">
+                                <label for="grupoId">Filtrar por grupo</label>
+                                <select class="form-control" id="grupoId" name="grupoId" onchange="this.form.submit()">
+                                    <option value="">-- Seleccione un grupo --</option>
+                                    @foreach (var g in grupos)
+                                    {
+                                        if (grupoSeleccionado == g.Idgrupo)
+                                        {
+                                            <option value="@g.Idgrupo" selected="selected">@g.Descripcion</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@g.Idgrupo">@g.Descripcion</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </form>
+                        @if (Model.Empleados.Any())
+                        {
+                        <form asp-action="EmpleadoMultiple" method="post">
+                            <input type="hidden" name="grupoId" value="@grupoSeleccionado" />
+                            <div class="table-responsive">
+                                <table id="tablaEmpleados" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">Seleccionar</th>
+                                            <th width="30%">Empleado</th>
+                                            <th width="25%">Turno actual</th>
+                                            <th width="35%">Turno a asignar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Empleados.Count; i++)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" name="Empleados[@i].Seleccionado" value="true" class="check-empleado" data-index="@i" />
+                                                    <input type="hidden" name="Empleados[@i].IdEmpleado" value="@Model.Empleados[i].IdEmpleado" />
+                                                    <input type="hidden" name="Empleados[@i].NombreCompleto" value="@Model.Empleados[i].NombreCompleto" />
+                                                </td>
+                                                <td>@Model.Empleados[i].NombreCompleto</td>
+                                                <td>@Model.Empleados[i].TurnoActual</td>
+                                                <td>
+                                                    <span class="turno-leyenda" id="leyenda-@i">Seleccione el check para habilitar</span>
+                                                    <select class="form-control turno-select" name="Empleados[@i].IdTurnoSeleccionado" id="turno-@i" style="display:none;">
+                                                        <option value="">-- Seleccione turno --</option>
+                                                        @foreach (var t in Model.TurnosDisponibles)
+                                                        {
+                                                            var descripcionTurno = $"{t.Nombre} ({t.HoraEntrada:HH:mm} - {t.HoraSalida:HH:mm})";
+                                                            <option value="@t.IdTurno">@descripcionTurno</option>
+                                                        }
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary">Asignar Turnos</button>
+                                <a asp-action="Index" class="btn btn-secondary ml-2">Cancelar</a>
+                            </div>
+                        </form>
+                        }
+                        else if (grupoSeleccionado != null)
+                        {
+                            <div class="alert alert-primary">No hay empleados activos en este grupo.</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <link rel="stylesheet" href="/lib/datatables/css/dataTables.bootstrap4.min.css">
+    <script src="/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/lib/datatables/js/dataTables.bootstrap4.min.js"></script>
+    
+    <style>
+        .table-responsive {
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+        
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 10px;
+        }
+        
+        .dataTables_wrapper .dataTables_info {
+            padding-top: 10px;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate {
+            padding-top: 10px;
+        }
+        
+        .turno-leyenda {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .check-empleado {
+            transform: scale(1.2);
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#tablaEmpleados').DataTable({
+                "responsive": true,
+                "lengthChange": true,
+                "autoWidth": false,
+                "pageLength": 15,
+                "scrollY": "300px",
+                "scrollCollapse": true,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "columnDefs": [
+                    {
+                        "targets": 0,
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "10%"
+                    },
+                    {
+                        "targets": 1,
+                        "width": "30%"
+                    },
+                    {
+                        "targets": 2,
+                        "width": "25%"
+                    },
+                    {
+                        "targets": 3,
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "35%"
+                    }
+                ],
+                "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+                "pagingType": "full_numbers"
+            });
+
+            // Reinicializar los eventos de checkbox después de cada cambio de página
+            table.on('draw', function() {
+                $('.check-empleado').off('change').on('change', function(){
+                    var idx = $(this).data('index');
+                    if($(this).is(':checked')){
+                        $('#leyenda-' + idx).hide();
+                        $('#turno-' + idx).show();
+                    } else {
+                        $('#leyenda-' + idx).show();
+                        $('#turno-' + idx).hide();
+                        $('#turno-' + idx).val('');
+                    }
+                });
+            });
+        });
+    </script>
+} 

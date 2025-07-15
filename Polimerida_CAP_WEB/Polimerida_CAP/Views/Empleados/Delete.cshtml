@@ -1,0 +1,40 @@
+@model Polimerida_CAP.Models.EmpleadoViewModel
+@{
+    ViewData["Title"] = "Eliminar Empleado";
+}
+<div class="content-header">
+    <div class="container-fluid"></div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Eliminar Empleado</h3>
+                <a asp-action="Index" class="btn btn-secondary float-right">Volver</a>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <strong>¡Advertencia!</strong> ¿Está seguro que desea eliminar este empleado?
+                </div>
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="IdEmpleado" />
+                    <dl class="row">
+                        <dt class="col-sm-3">Nombre:</dt>
+                        <dd class="col-sm-9">@Model.PrimerNombre @Model.ApellidoPaterno @Model.ApellidoMaterno</dd>
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">@Model.Email</dd>
+                        <dt class="col-sm-3">Credencial:</dt>
+                        <dd class="col-sm-9">@Model.Credencial</dd>
+                    </dl>
+                    <div class="form-group">
+                        <label for="FechaBaja">Fecha de baja <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="FechaBaja" name="FechaBaja" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Eliminar</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</section> 

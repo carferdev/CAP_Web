@@ -1,0 +1,182 @@
+@model Polimerida_CAP.Models.EmpleadoViewModel
+@inject IConfiguration Configuration
+
+@{
+
+
+
+    ViewData["Title"] = "Editar Empleado";
+    var baseUrl = Configuration["FileApiSettings:BaseUrl"];
+
+    var imageUrl = !string.IsNullOrEmpty(Model.UrlFoto) ? Model.UrlFoto : null;
+
+
+
+    imageUrl = ViewBag.FotoUrl;
+}
+<div class="content-header"><div class="container-fluid"></div></div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form asp-action="Edit" asp-route-id="@Model.IdEmpleado" method="post" enctype="multipart/form-data">
+                    <div class="card card-primary">
+                        <div class="card-header"><h3 class="card-title">Datos del Empleado</h3></div>
+                        <div class="card-body">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="IdEmpleado" />
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="PrimerNombre"></label>
+                                        <input asp-for="PrimerNombre" class="form-control" />
+                                        <span asp-validation-for="PrimerNombre" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="ApellidoPaterno"></label>
+                                        <input asp-for="ApellidoPaterno" class="form-control" />
+                                        <span asp-validation-for="ApellidoPaterno" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="ApellidoMaterno"></label>
+                                        <input asp-for="ApellidoMaterno" class="form-control" />
+                                        <span asp-validation-for="ApellidoMaterno" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="Sexo"></label>
+                                        <select asp-for="Sexo" class="form-control"><option value="male">Masculino</option><option value="female">Femenino</option></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="FechaIngreso"></label>
+                                        <input asp-for="FechaIngreso" type="date" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="IdDispositivo"></label>
+                                        <select asp-for="IdDispositivo" asp-items="ViewBag.Dispositivos" class="form-control"><option value="">-- Seleccione --</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IdSubgrupo"></label>
+                                <select asp-for="IdSubgrupo" asp-items="ViewBag.Subgrupos" class="form-control"><option value="">-- Seleccione --</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IdDepartamento"></label>
+                                <select asp-for="IdDepartamento" asp-items="ViewBag.Departamentos" class="form-control">
+                                    <option value="">-- Seleccione --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IdPuesto"></label>
+                                <select asp-for="IdPuesto" asp-items="ViewBag.Puestos" class="form-control">
+                                    <option value="">-- Seleccione --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Foto"></label>
+                                @* @if (ViewBag.FotoUrl != null)
+                                {
+                                    <div class="mb-3">
+                                        <label>Foto actual:</label><br />
+                                        <img src="@ViewBag.FotoUrl" alt="Foto del empleado" style="max-width:200px; border:1px solid #ccc; border-radius:8px;" />
+                                    </div>
+                                } *@
+                                <div id="drop-area" class="border border-secondary rounded" style="min-height:120px; display:flex; align-items:center; justify-content:center; flex-direction:column; cursor:pointer; background:#fafbfc; border-style:dashed;">
+                                    <input asp-for="Foto" type="file" accept="image/*" style="display:none;" id="fileElem" />
+                                    @if (imageUrl != null)
+                                    {
+                                        <img src="@imageUrl" id="preview" class="mt-2" style="max-width:200px; display:block;" />
+                                    }
+                                    else
+                                    {
+                                        <div id="drop-content" style="text-align:center;">
+                                            <i class="fas fa-image fa-2x mb-2" style="color:#bdbdbd;"></i><br />
+                                            <span style="color:#666;">o arrastra y suelta</span><br />
+                                            <span style="font-size:small; color:#888;">PNG, JPG, GIF hasta 10MB</span>
+                                        </div>
+                                        <img id="preview" class="mt-2" style="max-width:200px; display:none;" />
+                                    }
+                                </div>
+                                <span asp-validation-for="Foto" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Credencial"></label>
+                                <input asp-for="Credencial" class="form-control" type="number" />
+                                <span asp-validation-for="Credencial" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('fileElem');
+        const preview = document.getElementById('preview');
+        const dropContent = document.getElementById('drop-content');
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('border-primary'); });
+        dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('border-primary'); });
+        dropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            dropArea.classList.remove('border-primary');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                showPreview(e.dataTransfer.files[0]);
+            }
+        });
+        fileInput.addEventListener('change', function (e) {
+            if (fileInput.files.length) showPreview(fileInput.files[0]);
+            else {
+                preview.style.display = 'none';
+                if (dropContent) dropContent.style.display = 'block';
+            }
+        });
+        function showPreview(file) {
+            if (!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                preview.src = ev.target.result;
+                preview.style.display = 'block';
+                if (dropContent) dropContent.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+        // Si ya hay una imagen cargada al cargar la página, ocultar el drop-content
+        window.addEventListener('DOMContentLoaded', function() {
+            if (preview && preview.src && preview.src.length > 0 && preview.src !== window.location.href) {
+                preview.style.display = 'block';
+                if (dropContent) dropContent.style.display = 'none';
+            }
+        });
+    </script>
+} 

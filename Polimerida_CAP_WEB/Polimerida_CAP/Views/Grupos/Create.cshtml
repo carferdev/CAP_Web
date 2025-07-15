@@ -1,0 +1,53 @@
+@model Polimerida_CAP.Models.GrupoViewModel
+
+@{
+    ViewData["Title"] = "Agregar Nuevo Grupo";
+}
+
+<div class="content-header">
+    <div class="container-fluid"></div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form asp-action="Create" method="post">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Datos del Grupo</h3>
+                        </div>
+                        <div class="card-body">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <input type="hidden" asp-for="RegStatus" />
+
+                            <div class="form-group">
+                                <label asp-for="Nombre"></label>
+                                <input asp-for="Nombre" class="form-control" placeholder="Nombre del grupo">
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Descripcion"></label>
+                                <input asp-for="Descripcion" class="form-control" placeholder="Descripción del grupo">
+                                <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

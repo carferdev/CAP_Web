@@ -1,0 +1,118 @@
+@model IEnumerable<Polimerida_CAP.Models.IncidenciaEmpleadoViewModel>
+
+@{
+    ViewData["Title"] = "Incidencias de Empleados";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Incidencias de Empleados</h3>
+                    <div class="card-tools">
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nueva Incidencia
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <table id="tablaIncidenciasEmpleado" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Incidencia</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.NombreEmpleado</td>
+                                    <td>@item.DescripcionIncidencia</td>
+                                    <td>@item.FechaInicio.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.FechaFin.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.IdIncidenciaEmpleado" class="btn btn-primary btn-sm" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="@item.IdIncidenciaEmpleado" data-empleado="@item.NombreEmpleado" data-incidencia="@item.DescripcionIncidencia" data-toggle="modal" data-target="#deleteModal" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content text-center p-4">
+            <form id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mt-4 mb-2">
+                    <span style="font-size: 60px; color: #ffb300;">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </span>
+                </div>
+                <h3 class="font-weight-bold mb-3">¿Está seguro?</h3>
+                <div class="mb-4" style="font-size: 1.1rem;">
+                    ¿Desea eliminar la incidencia "<strong id="modalIncidencia"></strong>" del empleado "<strong id="modalEmpleado"></strong>"?
+                </div>
+                <div class="d-flex justify-content-center mb-3">
+                    <button type="submit" class="btn btn-danger btn-lg mr-2">Sí, eliminar</button>
+                    <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="/lib/datatables/css/dataTables.bootstrap4.min.css" />
+    <script src="/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/lib/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#tablaIncidenciasEmpleado').DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                }
+            });
+        });
+
+        $(function () {
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                var empleado = button.data('empleado');
+                var incidencia = button.data('incidencia');
+                var modal = $(this);
+                modal.find('#modalEmpleado').text(empleado);
+                modal.find('#modalIncidencia').text(incidencia);
+                var baseUrl = '@Url.Action("Delete", "IncidenciaEmpleado")';
+                modal.find('#deleteForm').attr('action', baseUrl + '/' + id);
+            });
+        });
+    </script>
+} 

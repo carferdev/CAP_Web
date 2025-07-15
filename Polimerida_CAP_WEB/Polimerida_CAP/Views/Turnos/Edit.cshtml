@@ -1,0 +1,85 @@
+@model Polimerida_CAP.Models.TurnosViewModel
+
+@{
+    ViewData["Title"] = "Editar Turno";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        @* Encabezado opcional *@
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form asp-action="Edit" asp-route-id="@Model.IdTurno" method="post">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Datos del Turno</h3>
+                        </div>
+                        <div class="card-body">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <input type="hidden" asp-for="IdTurno" />
+
+                            <div class="form-group">
+                                <label asp-for="Nombre"></label>
+                                <input asp-for="Nombre" class="form-control" placeholder="Ej: Matutino, Vespertino, Nocturno">
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="HoraEntrada"></label>
+                                        <input asp-for="HoraEntrada" class="form-control" type="time">
+                                        <span asp-validation-for="HoraEntrada" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="HoraSalida"></label>
+                                        <input asp-for="HoraSalida" class="form-control" type="time">
+                                        <span asp-validation-for="HoraSalida" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Entradacomida"></label>
+                                        <input asp-for="Entradacomida" class="form-control" type="time">
+                                        <span asp-validation-for="Entradacomida" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Salidacomida"></label>
+                                        <input asp-for="Salidacomida" class="form-control" type="time">
+                                        <span asp-validation-for="Salidacomida" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

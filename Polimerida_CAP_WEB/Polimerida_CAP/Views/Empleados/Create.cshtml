@@ -1,0 +1,263 @@
+@model Polimerida_CAP.Models.EmpleadoViewModel
+
+@{
+    ViewData["Title"] = "Agregar Nuevo Empleado";
+}
+<div class="content-header"><div class="container-fluid"></div></div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div class="card card-primary">
+                        <div class="card-header"><h3 class="card-title">Datos del Empleado</h3></div>
+                        <div class="card-body">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="PrimerNombre"></label>
+                                        <input asp-for="PrimerNombre" class="form-control" />
+                                        <span asp-validation-for="PrimerNombre" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="ApellidoPaterno"></label>
+                                        <input asp-for="ApellidoPaterno" class="form-control" />
+                                        <span asp-validation-for="ApellidoPaterno" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="ApellidoMaterno"></label>
+                                        <input asp-for="ApellidoMaterno" class="form-control" />
+                                        <span asp-validation-for="ApellidoMaterno" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="Sexo"></label>
+                                        <select asp-for="Sexo" class="form-control"><option value="male">Masculino</option><option value="female">Femenino</option></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="FechaIngreso"></label>
+                                        <input asp-for="FechaIngreso" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label asp-for="IdDispositivo"></label>
+                                        <select asp-for="IdDispositivo" asp-items="ViewBag.Dispositivos" class="form-control"><option value="">-- Seleccione --</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IdSubgrupo"></label>
+                                <select asp-for="IdSubgrupo" class="form-control">
+                                    <option value="">-- Seleccione --</option>
+                                </select>
+                                <span id="subgrupo-leyenda" class="text-info" style="display:block; font-size:14px; margin-top:4px;">Primero seleccione el dispositivo.</span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IdDepartamento"></label>
+                                <select asp-for="IdDepartamento" asp-items="ViewBag.Departamentos" class="form-control">
+                                    <option value="">-- Seleccione --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IdPuesto"></label>
+                                <select asp-for="IdPuesto" asp-items="ViewBag.Puestos" class="form-control">
+                                    <option value="">-- Seleccione --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Foto"></label>
+                                <div id="drop-area" class="border border-secondary rounded" style="min-height:120px; display:flex; align-items:center; justify-content:center; flex-direction:column; cursor:pointer; background:#fafbfc; border-style:dashed;">
+                                    <input asp-for="Foto" type="file" accept="image/*" style="display:none;" id="fileElem" />
+                                    <div id="drop-content" style="text-align:center;">
+                                        <i class="fas fa-image fa-2x mb-2" style="color:#bdbdbd;"></i><br />
+                                        <span style="color:#666;">o arrastra y suelta</span><br />
+                                        <span style="font-size:small; color:#888;">PNG, JPG, GIF hasta 200KB</span>
+                                    </div>
+                                    <img id="preview" class="mt-2" style="max-width:200px; display:none;" />
+                                </div>
+                                <div id="file-error" class="text-danger" style="display:none; padding: 8px; margin-top: 5px; border-radius: 4px; font-size: 14px;"></div>
+                                <span asp-validation-for="Foto" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Credencial"></label>
+                                <input asp-for="Credencial" class="form-control" type="number" />
+                                <span asp-validation-for="Credencial" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('fileElem');
+        const preview = document.getElementById('preview');
+        const dropContent = document.getElementById('drop-content');
+        const fileError = document.getElementById('file-error');
+        const maxSize = 200 * 1024; // 200KB en bytes
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('border-primary'); });
+        dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('border-primary'); });
+        dropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            dropArea.classList.remove('border-primary');
+            if (e.dataTransfer.files.length) {
+                const file = e.dataTransfer.files[0];
+                if (validateFile(file)) {
+                    fileInput.files = e.dataTransfer.files;
+                    showPreview(file);
+                    dropArea.style.borderColor = '#28a745';
+                } else {
+                    dropArea.style.borderColor = '#dc3545';
+                    preview.style.display = 'none';
+                    if (dropContent) dropContent.style.display = 'block';
+                }
+            }
+        });
+        fileInput.addEventListener('change', function (e) {
+            if (fileInput.files.length) {
+                const file = fileInput.files[0];
+                if (validateFile(file)) {
+                    showPreview(file);
+                    dropArea.style.borderColor = '#28a745';
+                } else {
+                    dropArea.style.borderColor = '#dc3545';
+                    preview.style.display = 'none';
+                    if (dropContent) dropContent.style.display = 'block';
+                }
+            } else {
+                // Limpiar estado cuando no hay archivo
+                fileError.style.display = 'none';
+                preview.style.display = 'none';
+                dropArea.style.borderColor = '#6c757d';
+                if (dropContent) dropContent.style.display = 'block';
+            }
+        });
+        function validateFile(file) {
+            // Limpiar errores anteriores
+            fileError.style.display = 'none';
+            fileError.textContent = '';
+            
+            // Validar tipo de archivo
+            if (!file.type.startsWith('image/')) {
+                fileError.textContent = '❌ Error: Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF).';
+                fileError.style.display = 'block';
+                fileError.style.fontWeight = 'bold';
+                fileError.style.color = '#dc3545';
+                return false;
+            }
+            
+            // Validar tamaño (200KB)
+            if (file.size > maxSize) {
+                const fileSizeKB = Math.round(file.size / 1024);
+                fileError.textContent = `❌ Error: No se puede subir una imagen mayor a 200KB. El archivo seleccionado pesa ${fileSizeKB}KB.`;
+                fileError.style.display = 'block';
+                fileError.style.fontWeight = 'bold';
+                fileError.style.color = '#dc3545';
+                return false;
+            }
+            
+            // Si es válido, mostrar mensaje de éxito
+            fileError.textContent = '✅ Archivo válido';
+            fileError.style.display = 'block';
+            fileError.style.fontWeight = 'bold';
+            fileError.style.color = '#28a745';
+            
+            return true;
+        }
+
+        // Validar antes de enviar el formulario
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (!validateFile(file)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+
+        function showPreview(file) {
+            if (!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                preview.src = ev.target.result;
+                preview.style.display = 'block';
+                if (dropContent) dropContent.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- SUBGRUPOS DINÁMICOS SEGÚN DISPOSITIVO ---
+        const dispositivoSelect = document.querySelector('[name="IdDispositivo"]');
+        const subgrupoSelect = document.querySelector('[name="IdSubgrupo"]');
+        const subgrupoLeyenda = document.getElementById('subgrupo-leyenda');
+
+        // Al cargar la página, limpiar el select de subgrupos y mostrar la leyenda
+        subgrupoSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+        subgrupoLeyenda.style.display = dispositivoSelect.value ? 'none' : 'block';
+
+        dispositivoSelect.addEventListener('change', function() {
+            const idDispositivo = this.value;
+            subgrupoSelect.innerHTML = '<option value="">Cargando...</option>';
+            subgrupoLeyenda.style.display = idDispositivo ? 'none' : 'block';
+            if (!idDispositivo) {
+                subgrupoSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+                return;
+            }
+            fetch(`/Subgrupos/GetSubgruposByDispositivo?idDispositivo=${idDispositivo}`)
+                .then(resp => resp.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        subgrupoSelect.innerHTML = '<option value="">No hay subgrupos</option>';
+                        return;
+                    }
+                    subgrupoSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+                    data.forEach(sg => {
+                        const opt = document.createElement('option');
+                        opt.value = sg.idSubgrupo || sg.IdSubgrupo;
+                        opt.textContent = sg.nombre || sg.Nombre;
+                        subgrupoSelect.appendChild(opt);
+                    });
+                })
+                .catch(() => {
+                    subgrupoSelect.innerHTML = '<option value="">Error al cargar</option>';
+                });
+        });
+
+        // Si ya hay una imagen cargada al cargar la página, ocultar el drop-content
+        window.addEventListener('DOMContentLoaded', function() {
+            if (preview && preview.src && preview.src.length > 0 && preview.src !== window.location.href) {
+                preview.style.display = 'block';
+                if (dropContent) dropContent.style.display = 'none';
+            }
+        });
+    </script>
+} 
