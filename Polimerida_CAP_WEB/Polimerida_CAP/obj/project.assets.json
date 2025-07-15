@@ -11482,23 +11482,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Carlos\\.nuget\\packages\\": {},
+    "C:\\Users\\Analista.Soporte\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Carlos\\source\\repos\\CAP_Web\\Polimerida_CAP_WEB\\Polimerida_CAP\\Polimerida_CAP.csproj",
+      "projectUniqueName": "C:\\Users\\Analista.Soporte\\source\\repos\\Cap_Web\\CAP_Web\\Polimerida_CAP_WEB\\Polimerida_CAP\\Polimerida_CAP.csproj",
       "projectName": "Polimerida_CAP",
-      "projectPath": "C:\\Users\\Carlos\\source\\repos\\CAP_Web\\Polimerida_CAP_WEB\\Polimerida_CAP\\Polimerida_CAP.csproj",
-      "packagesPath": "C:\\Users\\Carlos\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Carlos\\source\\repos\\CAP_Web\\Polimerida_CAP_WEB\\Polimerida_CAP\\obj\\",
+      "projectPath": "C:\\Users\\Analista.Soporte\\source\\repos\\Cap_Web\\CAP_Web\\Polimerida_CAP_WEB\\Polimerida_CAP\\Polimerida_CAP.csproj",
+      "packagesPath": "C:\\Users\\Analista.Soporte\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Analista.Soporte\\source\\repos\\Cap_Web\\CAP_Web\\Polimerida_CAP_WEB\\Polimerida_CAP\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Carlos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Analista.Soporte\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
