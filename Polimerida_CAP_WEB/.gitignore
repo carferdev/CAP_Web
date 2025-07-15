@@ -1,0 +1,33 @@
+# Archivos de Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de caché y temporales
+*.db
+*.db-shm
+*.db-wal
+*.bin
+*.cache
+*.bak
+*.backup.json
+
+# Archivos generados por Copilot, Rider, Resharper, etc.
+.idea/
+.vscode/
+
+# Build y publicación
+bin/
+obj/
+publish/
+
+# Paquetes y dependencias
+packages/
+node_modules/
+
+# Otros comunes
+*.log
+*.tmp
+*.swp
