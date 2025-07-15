@@ -49,15 +49,14 @@ namespace Polimerida_CAP.Services
 
         public async Task<TurnosViewModel> CreateTurnoAsync(TurnosViewModel turno)
         {
-            // Validar duplicados solo por nombre y hora/minuto/segundo, ignorando la fecha
+            // Validar duplicados por hora de entrada y salida (ignorando el nombre)
             bool existe = await _context.Turno.AnyAsync(t =>
-                t.Nombre == turno.Nombre &&
                 t.Horaentrada.TimeOfDay == turno.HoraEntrada.TimeOfDay &&
                 t.Horasalida.TimeOfDay == turno.HoraSalida.TimeOfDay &&
                 t.RegStatus == "A");
             if (existe)
             {
-                throw new InvalidOperationException("Ya existe un turno con el mismo nombre y horario.");
+                throw new InvalidOperationException("Ya existe un turno con la misma hora de entrada y salida.");
             }
             var entity = new Services.Data.Turno
             {
