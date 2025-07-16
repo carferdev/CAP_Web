@@ -31,4 +31,16 @@ node_modules/
 *.log
 *.tmp
 *.swp
+<<<<<<< HEAD
 Polimerida_CAP/public/
+=======
+*.dll
+*.pdb
+*.xml
+*.json
+*.config
+*.csproj
+*.csproj.user
+*.csproj.vspscc
+*.csproj.vssscc
+>>>>>>> 9282fc2 (Update .gitignore)
